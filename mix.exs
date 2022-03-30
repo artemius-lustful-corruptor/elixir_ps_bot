@@ -1,9 +1,9 @@
-defmodule ElixirTelegramBotSample.MixProject do
+defmodule ProletarianSolidarity.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :elixir_telegram_bot_sample,
+      app: :proletarian_solidarity,
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
@@ -21,8 +21,7 @@ defmodule ElixirTelegramBotSample.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
+      {:telegram, git: "https://github.com/visciang/telegram.git", tag: "0.8.0"}
     ]
   end
 end

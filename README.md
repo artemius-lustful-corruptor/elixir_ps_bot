@@ -1,7 +1,21 @@
-# Elixir Telegram Bot Boilerplate
-# TODO
-1. Build Genserver with state: %{item_name: cost}
-2. Create periodic background job to calculate sum of items cost and erase that state every month
-3. to create skelet from boilerplate telegram_both
-4. to investigate distillery and ediliver from https://github.com/turbo-cunnos/myapp
-5. to deploy telegram_bot to VPS
+# ProletarianSolidarity
+
+**TODO: Add description**
+
+## Installation
+
+If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+by adding `proletarian_solidarity` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:proletarian_solidarity, "~> 0.1.0"}
+  ]
+end
+```
+
+Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
+and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
+be found at [https://hexdocs.pm/proletarian_solidarity](https://hexdocs.pm/proletarian_solidarity).
+

@@ -20,5 +20,5 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-elixir_telegram_bot_sample-*.tar
+proletarian_solidarity-*.tar
 
