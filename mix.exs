@@ -14,6 +14,7 @@ defmodule ProletarianSolidarity.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {ProletarianSolidarity.Application, []},
       extra_applications: [:logger]
     ]
   end
@@ -21,7 +22,8 @@ defmodule ProletarianSolidarity.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:telegram, git: "https://github.com/visciang/telegram.git", tag: "0.8.0"}
+      {:telegram, git: "https://github.com/visciang/telegram.git", tag: "0.8.0"},
+      {:distillery, "~> 2.0"}
     ]
   end
 end

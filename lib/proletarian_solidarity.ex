@@ -1,9 +1,9 @@
-defmodule ProletarianSolidarity do
+defmodule ProletarianSolidarity.Bot do
   @moduledoc """
   Documentation for `ProletarianSolidarity`.
   """
 
-   @behaviour Telegram.ChatBot
+  @behaviour Telegram.ChatBot
 
   @impl Telegram.ChatBot
   def init() do
@@ -12,7 +12,11 @@ defmodule ProletarianSolidarity do
   end
 
   @impl Telegram.ChatBot
-  def handle_update(%{"message" => %{"text" => "/reset", "chat" => %{"id" => chat_id}}}, token, count_state) do
+  def handle_update(
+        %{"message" => %{"text" => "/reset", "chat" => %{"id" => chat_id}}},
+        token,
+        count_state
+      ) do
     Telegram.Api.request(token, "sendMessage",
       chat_id: chat_id,
       text: "Reset message counter (it was #{count_state})"
@@ -21,7 +25,11 @@ defmodule ProletarianSolidarity do
     {:ok, 0}
   end
 
-  def handle_update(%{"message" => %{"text" => "/stop", "chat" => %{"id" => chat_id}}}, token, count_state) do
+  def handle_update(
+        %{"message" => %{"text" => "/stop", "chat" => %{"id" => chat_id}}},
+        token,
+        count_state
+      ) do
     Telegram.Api.request(token, "sendMessage",
       chat_id: chat_id,
       text: "Counter destroyed, bye!"
