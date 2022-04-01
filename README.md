@@ -2,6 +2,11 @@
 
 **TODO: Add description**
 
+1. Buy VPS
+2. Deploy
+3. Error handling
+4. Tests
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
