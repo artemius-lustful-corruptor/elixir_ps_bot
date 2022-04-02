@@ -2,6 +2,7 @@ defmodule ProletarianSolidarity.Bot do
   @moduledoc """
   Documentation for `ProletarianSolidarity`.
   """
+  require Logger
 
   @behaviour Telegram.ChatBot
 
@@ -14,58 +15,23 @@ defmodule ProletarianSolidarity.Bot do
      }}
   end
 
+  #TODO to know how to handle messages with pictures, audio, video, or quotes, comments
   @impl Telegram.ChatBot
-  def handle_update(
-        %{"message" => %{"text" => "/reset", "chat" => %{"id" => chat_id}}},
-        token,
-        state
-      ) do
-    Telegram.Api.request(token, "sendMessage",
-      chat_id: chat_id,
-      text: "Reset message counter (it was #{state.count})"
-    )
-
-    {:ok, 0}
-  end
-
-  def handle_update(
-        %{"message" => %{"text" => "/stop", "chat" => %{"id" => chat_id}}},
-        token,
-        state
-      ) do
-    Telegram.Api.request(token, "sendMessage",
-      chat_id: chat_id,
-      text: "Counter destroyed, bye!"
-    )
-
-    {:stop, state}
-  end
-
-  # def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}}}, token, state) do
-  #   count_state = state.count + 1
-
-  #   Telegram.Api.request(token, "sendMessage",
-  #     chat_id: chat_id,
-  #     text: "Hey! You sent me #{count_state} messages"
-  #   )
-
-  #   {:ok, state}
-  # end
-
   def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}} = message}, token, state) do
     money =
       message["text"]
-      |> String.split(" ") |> IO.inspect()
+      |> String.splitter([" ", ",", ":", "-", "_", "->"]) |> IO.inspect() #TODO split string by [:, -, ->]
       |> case do
            [item, price]  ->
              String.to_integer(price) #TODO to create more smart algorithm
            _ ->
+             error(token, chat_id)
              0
          end
       
     
       new_state = %{state | capital: state.capital + money}
-      IO.inspect(new_state)
+      Logger.debug(new_state)
       Telegram.Api.request(token, "sendMessage",
         chat_id: chat_id,
         text: "The total capital has been economed: #{new_state.capital}"
@@ -74,8 +40,20 @@ defmodule ProletarianSolidarity.Bot do
     {:ok, new_state}
   end
 
-  def handle_update(_update, _token, state) do
-    # Unknown update
+  def handle_update(msg, _token, state) do
+    Logger.warn("Unexpected message: #{inspect(msg)} has been handled")
     {:ok, state}
   end
+
+  defp error(token, chat_id) do
+     Telegram.Api.request(token, "sendMessage",
+        chat_id: chat_id,
+        text: """
+        Error! Doesn't support that message format. 
+        Please use this format: 'ITEM' delimiter 'PRICE'.
+        The delimiter may be one of [" ", ",", ":", "-", "_", "->"]
+        """
+      )
+  end
+  
 end
