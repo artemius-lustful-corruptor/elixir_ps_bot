@@ -12,7 +12,7 @@ defmodule ProletarianSolidarity.Bot do
   @spec init :: {:ok, %{capital: 0, count: 0}}
   def init() do
     count_state = 0
-
+    IO.inspect(self())
     {:ok,
      %{
        count: count_state,

@@ -21,4 +21,12 @@ defmodule ProletarianSolidarityTest do
              text: "#{@msg}: 110"
            } == MockTelegramApi.handle_update(msg, "test_token", %{capital: 100})
   end
+
+
+  describe "test backgoud notify task" do
+    test "notify" do
+      start_supervised(ProletarianSolidarity.Bot.Notifier)
+      :timer.sleep(5000)
+    end
+  end
 end

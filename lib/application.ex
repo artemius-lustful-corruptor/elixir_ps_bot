@@ -5,7 +5,7 @@ defmodule ProletarianSolidarity.Application do
   @impl Application
   def start(_type, _args) do
     IO.puts "STARTING BOT"
-    token = Application.fetch_env!(:proletarian_solidarity, :token_counter_bot)
+    token = Application.fetch_env!(:proletarian_solidarity, :token)
     options = [purge: true, max_bot_concurrency: 1000]
 
     children = [

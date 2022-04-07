@@ -20,5 +20,8 @@ defmodule ProletarianSolidarity.Bot.Notifier do
     # 1. to get state
     # 2. to create PS_API.ex
     # 3. to create send_msg func in PS_API.ex
+    state = %{capital: 245}
+    IO.inspect("sended")
+    :ok
   end
 end
