@@ -10,7 +10,7 @@ defmodule ProletarianSolidarity.Application do
 
     children = [
       {Telegram.Bot.ChatBot.Supervisor, {ProletarianSolidarity.Bot, token, options}},
-      #ProletarianSolidarity.Bot.Notifier
+      ProletarianSolidarity.Bot.Notifier
     ]
 
     opts = [strategy: :one_for_one, name: ProletarianSolidarity.Supervisor]

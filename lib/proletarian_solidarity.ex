@@ -11,33 +11,24 @@ defmodule ProletarianSolidarity.Bot do
 
   @behaviour Telegram.ChatBot
 
-  use GenServer
-
-  def start_link(_args) do
-    IO.inspect("Start link")
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
-  end
-
-
-  #@impl Telegram.ChatBot
-  #@spec init :: {:ok, %{capital: 0, count: 0}}
-  def init(_args) do
+  @impl Telegram.ChatBot
+  def init() do
     count_state = 0
-    IO.inspect(self())
 
-    
-    
-    {:ok,
-     %{
-       count: count_state,
-       capital: 0
-     }}
+    initial_state = %{
+      count: count_state,
+      capital: 0,
+      chat_id: nil
+    }
+
+    #Notifier.set_state(self(), initial_state) #FIX ME
+
+    {:ok, initial_state}
   end
 
   @impl Telegram.ChatBot
   @spec handle_update(any, any, any) :: {:ok, any}
-  def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}}, "text" => text}, token, state) do
-    IO.inspect(self())
+  def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}, "text" => text}}, token, state) do
     money =
       text
       |> String.splitter([" ", ",", ":", "-", "_", "->"])
@@ -51,20 +42,23 @@ defmodule ProletarianSolidarity.Bot do
           0
       end
 
-    new_state = %{state | capital: state.capital + money}
-    #Notifier.set_state(new_state)
+    new_state = %{
+      state
+      | capital: state.capital + money,
+        chat_id: chat_id
+    }
+
     Logger.debug("#{inspect(new_state)}")
 
     text = "The total capital has been economed: #{new_state.capital}"
     API.send_msg(token, chat_id, text)
-
+    Notifier.set_state(self(), new_state)
     {:ok, new_state}
   end
 
-  def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}}}, token, state) do
-    IO.inspect(self())
+  def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}}} = msg, token, state) do
     error(token, chat_id)
-    {:ok, %{state | capital: 100}}
+    {:ok, state}
   end
 
   def handle_update(msg, _token, state) do
@@ -76,7 +70,6 @@ defmodule ProletarianSolidarity.Bot do
     IO.inspect(state)
     {:ok, state}
   end
-  
 
   defp get_price(price) when is_integer(price), do: price
 
