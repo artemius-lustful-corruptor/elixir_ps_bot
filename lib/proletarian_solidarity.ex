@@ -13,17 +13,24 @@ defmodule ProletarianSolidarity.Bot do
 
   @impl Telegram.ChatBot
   def init() do
-    count_state = 0
-
     initial_state = %{
-      count: count_state,
       capital: 0,
       chat_id: nil
     }
 
-    #Notifier.set_state(self(), initial_state) #FIX ME
+    # Notifier.set_state(self(), initial_state) #FIXME
 
     {:ok, initial_state}
+  end
+
+  @impl Telegram.ChatBot
+  def handle_update(
+        %{"message" => %{"chat" => %{"id" => _chat_id}, "text" => "/paided"}},
+        _token,
+        state
+      ) do
+    new_state = %{state | capital: 0}
+    {:ok, new_state}
   end
 
   @impl Telegram.ChatBot
@@ -56,18 +63,15 @@ defmodule ProletarianSolidarity.Bot do
     {:ok, new_state}
   end
 
-  def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}}} = msg, token, state) do
+  @impl Telegram.ChatBot
+  def handle_update(%{"message" => %{"chat" => %{"id" => chat_id}}}, token, state) do
     error(token, chat_id)
     {:ok, state}
   end
 
+  @impl Telegram.ChatBot
   def handle_update(msg, _token, state) do
     Logger.warn("Unexpected message: #{inspect(msg)} has been handled")
-    {:ok, state}
-  end
-
-  def handle_call(:get_state, _from, state) do
-    IO.inspect(state)
     {:ok, state}
   end
 

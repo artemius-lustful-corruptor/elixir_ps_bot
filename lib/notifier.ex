@@ -3,8 +3,7 @@ defmodule ProletarianSolidarity.Bot.Notifier do
 
   alias ProletarianSolidarity.Bot.API
 
-  # @period 30 * 1000 * 86400 #move to config
-  @period 1000
+  @period Application.get_env(:proletarian_solidarity, :period)
 
   # Client
 
@@ -37,26 +36,32 @@ defmodule ProletarianSolidarity.Bot.Notifier do
 
   @impl true
   def handle_cast({:set, {pid, data}}, state) do
-    new_state = Map.put(state, pid, data) |> IO.inspect()
+    new_state = Map.put(state, pid, data)
     {:noreply, new_state}
   end
 
   @impl true
   def handle_info(:notify, state) do
     token = API.get_token()
-    # TODO iterate over pids
-    keys = Map.keys(state)
+    keys = Map.keys(state) |> IO.inspect()
 
-    Enum.each(keys, fn pid ->
-      client_state = Map.get(state, pid)
-      chat_id = Map.get(client_state, :chat_id)
-      text = Map.get(client_state, :capital)
-      IO.inspect(state)
-      API.send_msg(token, chat_id, text)
-    end)
+    new_state =
+      Enum.reduce(keys, state, fn pid, state_acc ->
+        {client_state, state} = Map.pop(state_acc, pid)
+        chat_id = Map.get(client_state, :chat_id)
+        capital = Map.get(client_state, :capital)
+
+        text = """
+        Capital for donation #{capital} RUB
+        """
+        IO.inspect({token, chat_id, text})
+        API.send_msg(token, chat_id, text)
+        API.send_msg(token, chat_id, "/paided")
+        state
+      end)
 
     notify()
-    {:noreply, state}
+    {:noreply, new_state}
   end
 
   defp notify() do
