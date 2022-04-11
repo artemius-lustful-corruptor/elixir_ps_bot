@@ -6,7 +6,7 @@ end
 defmodule ProletarianSolidarity.Bot.API do
   @behaviour ProletarianSolidarity.Bot.ApiClient
 
-  def get_token(), do: Application.get_env(:proletarian_solidarity, :token) |> IO.inspect()
+  def get_token(), do: Application.get_env(:proletarian_solidarity, :token)
 
   def send_msg(token, chat_id, text) do
     Telegram.Api.request(token, "sendMessage",

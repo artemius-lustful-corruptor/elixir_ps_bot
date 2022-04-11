@@ -10,6 +10,7 @@ defmodule ProletarianSolidarityTest do
   setup do
     defmock(MockTelegramApi, for: Telegram.ChatBot)
     defmock(APIMock, for: ProletarianSolidarity.Bot.ApiClient)
+    Application.put_env(:proletarian_solidarity, :t_api_client, APIMock)
     :ok
   end
 
@@ -29,22 +30,23 @@ defmodule ProletarianSolidarityTest do
 
   describe "test backgoud notify task" do
     test "notify" do
-      #expect(APIMock, :send_msg, fn _token, chat_id, text ->
-      #  IO.inspect("sending msg")
-      #  {:ok, chat_id, text}
-      #end)
+      n = 100
+      parent_pid = self()
 
-      expect(APIMock, :get_token, fn ->
-        IO.inspect("get_token")
-        {:ok, "test_token"}
+      expect(APIMock, :send_msg, n, fn _token, chat_id, text ->
+        send(parent_pid, {:ok, chat_id, text})
       end)
 
-      start_supervised(Notifier)
-      Notifier.set_state(self(), %{capital: 100, chat_id: 10})
+      expect(APIMock, :get_token, n, fn ->
+        "test_token"
+      end)
+
+      pid = Process.whereis(Notifier)
+      allow(APIMock, parent_pid, pid)
+      Notifier.set_state(parent_pid, %{capital: 100, chat_id: 10})
       :timer.sleep(5000)
 
-     
-      # assert_receive {:ok, 10, "test"}, 5000
+      assert_receive {:ok, 10, "Capital for donation 100 RUB\n"}, 5000
     end
   end
 end

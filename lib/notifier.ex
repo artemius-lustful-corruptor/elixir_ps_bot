@@ -1,8 +1,6 @@
 defmodule ProletarianSolidarity.Bot.Notifier do
   use GenServer
 
-  alias ProletarianSolidarity.Bot.API
-
   @period Application.get_env(:proletarian_solidarity, :period)
 
   # Client
@@ -42,8 +40,8 @@ defmodule ProletarianSolidarity.Bot.Notifier do
 
   @impl true
   def handle_info(:notify, state) do
-    token = API.get_token()
-    keys = Map.keys(state) |> IO.inspect()
+    token = api().get_token()
+    keys = Map.keys(state)
 
     new_state =
       Enum.reduce(keys, state, fn pid, state_acc ->
@@ -54,9 +52,9 @@ defmodule ProletarianSolidarity.Bot.Notifier do
         text = """
         Capital for donation #{capital} RUB
         """
-        IO.inspect({token, chat_id, text})
-        API.send_msg(token, chat_id, text)
-        API.send_msg(token, chat_id, "/paided")
+
+        api().send_msg(token, chat_id, text)
+        api().send_msg(token, chat_id, "/paided")
         state
       end)
 
@@ -67,4 +65,6 @@ defmodule ProletarianSolidarity.Bot.Notifier do
   defp notify() do
     Process.send_after(self(), :notify, @period)
   end
+
+  defp api(), do: Application.get_env(:proletarian_solidarity, :t_api_client)
 end
