@@ -1,8 +1,6 @@
 defmodule ProletarianSolidarity.Bot.Notifier do
   use GenServer
 
-  @period Application.get_env(:proletarian_solidarity, :period)
-
   # Client
 
   def start_link(_) do
@@ -63,8 +61,9 @@ defmodule ProletarianSolidarity.Bot.Notifier do
   end
 
   defp notify() do
-    Process.send_after(self(), :notify, @period)
+    Process.send_after(self(), :notify, period())
   end
 
   defp api(), do: Application.get_env(:proletarian_solidarity, :t_api_client)
+  defp period(), do: Application.get_env(:proletarian_solidarity, :period)
 end

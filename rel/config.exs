@@ -47,7 +47,7 @@ environment :prod do
 
   set(
     overlays: [
-      {:copy, "rel/config.exs", "etc/config.exs"}
+      {:copy, "rel/config/config.exs", "etc/config.exs"}
     ]
   )
 end
